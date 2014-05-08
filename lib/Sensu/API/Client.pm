@@ -1,4 +1,5 @@
 package Sensu::API::Client;
+# ABSTRACT: Perl client for the Sensu API
 
 use 5.010;
 use Moo;
