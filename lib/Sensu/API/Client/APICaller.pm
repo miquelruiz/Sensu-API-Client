@@ -43,4 +43,11 @@ sub post {
     return decode_json($r->{content});
 }
 
+sub delete {
+    my ($self, $url) = @_;
+    my $r = $self->ua->delete($self->url . $url, { headers => $self->headers });
+    croak "$r->{status} $r->{reason}\n" unless $r->{success};
+    return;
+}
+
 1;

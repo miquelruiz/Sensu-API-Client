@@ -4,8 +4,7 @@ package Sensu::API::Client;
 use 5.010;
 use Moo;
 use JSON;
-
-use Data::Dump;
+use Carp;
 
 with 'Sensu::API::Client::APICaller';
 
@@ -30,6 +29,34 @@ sub resolve {
 
 sub info {
     return shift->get('/info');
+}
+
+sub get_stash {
+    my ($self, $path) = @_;
+    return $self->get('/stashes/' . $path);
+}
+
+sub get_stashes {
+    return shift->get('/stashes');
+}
+
+sub create_stash {
+    my ($self, @args) = @_;
+
+    my $hash = { @args };
+    my %valid_keys = ( path => 1, content => 1 );
+    my @not_valid  = grep { not defined $valid_keys{$_} } keys %$hash;
+
+    die 'Unexpected keys: ' . join(',', @not_valid) if (scalar @not_valid);
+    die 'Path required'    unless $hash->{path};
+    die 'Content required' unless $hash->{content};
+
+    return $self->post('/stashes', {@args});
+}
+
+sub delete_stash {
+    my ($self, $path) = @_;
+    return $self->delete('/stashes/' . $path);
 }
 
 1;
