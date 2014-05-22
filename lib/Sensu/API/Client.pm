@@ -33,6 +33,7 @@ sub info {
 
 sub get_stash {
     my ($self, $path) = @_;
+    die 'Path required' unless $path;
     return $self->get('/stashes/' . $path);
 }
 

@@ -41,6 +41,8 @@ SKIP: {
         unexpected => 'shit',
     ) } qr/unexpected/i, 'Unexpected keys dies';
 
+    throws_ok { $api->get_stash } qr/path required/i, 'Path required';
+
 }
 
 done_testing();
