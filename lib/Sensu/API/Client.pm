@@ -28,6 +28,10 @@ sub resolve {
     return $self->post('/resolve', { client => $client, check => $check });
 }
 
+sub info {
+    return shift->get('/info');
+}
+
 1;
 
 __END__
