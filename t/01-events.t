@@ -6,8 +6,6 @@ use Test::Exception;
 
 use Sensu::API::Client;
 
-use Data::Dump;
-
 SKIP: {
     skip '$ENV{SENSU_API_URL} not set', 5 unless $ENV{SENSU_API_URL};
 
