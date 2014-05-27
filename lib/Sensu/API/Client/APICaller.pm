@@ -7,6 +7,8 @@ use Carp;
 use JSON;
 use HTTP::Tiny;
 
+our @CARP_NOT = qw/ Sensu::API::Client /;
+
 has ua => (
     is  => 'ro',
     default => sub { HTTP::Tiny->new },
