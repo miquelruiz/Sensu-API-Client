@@ -23,7 +23,7 @@ has headers => (
 sub get {
     my ($self, $url) = @_;
     my $r = $self->ua->get($self->url . $url, { headers => $self->headers });
-    croak "$r->{status} $r->{reason}\n" unless $r->{success};
+    croak "$r->{status} $r->{reason}" unless $r->{success};
 
     return decode_json($r->{content});
 }
@@ -38,7 +38,7 @@ sub post {
     }
 
     my $r = $self->ua->post($self->url . $url, $post);
-    croak "$r->{status} $r->{reason}\n" unless $r->{success};
+    croak "$r->{status} $r->{reason}" unless $r->{success};
 
     return decode_json($r->{content});
 }
@@ -46,7 +46,7 @@ sub post {
 sub delete {
     my ($self, $url) = @_;
     my $r = $self->ua->delete($self->url . $url, { headers => $self->headers });
-    croak "$r->{status} $r->{reason}\n" unless $r->{success};
+    croak "$r->{status} $r->{reason}" unless $r->{success};
     return;
 }
 
