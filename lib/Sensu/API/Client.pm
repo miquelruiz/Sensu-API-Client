@@ -17,11 +17,16 @@ has url => (
 );
 
 sub events {
-    my ($self, $client, $check) = @_;
+    my ($self, $client) = @_;
     my $path = '/events';
     $path .= "/$client" if $client;
-    $path .= "/$check"  if $check;
     return $self->get($path);
+}
+
+sub event {
+    my ($self, $client, $check) = @_;
+    croak 'Client and check required' unless ($client and $check);
+    return $self->get(sprintf('/events/%s/%s', $client, $check));
 }
 
 sub resolve {
