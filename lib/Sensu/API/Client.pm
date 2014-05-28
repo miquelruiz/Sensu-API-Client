@@ -188,7 +188,10 @@ Sensu::API::Client - API client for the Sensu monitoring framework
 =head1 DESCRIPTION
 
 Set of modules based in Moo to access the REST API provided by the Sensu
-monitoring framework. Currently supports the version 0.12
+monitoring framework. Currently supports the version 0.12.
+
+Some of the methods throw exceptions. If a parameter is documented as required,
+an exception will be thrown if the method is called without the parameter.
 
 =head1 METHODS
 
@@ -204,9 +207,6 @@ Returns an instance of Sensu::API::Client.
 
 It is the URL where the API resides. It accepts user and password for basic
 authentication. Example: http://admin:secret@localhost:4567
-
-Some of the methods can throw exceptions. Look at each method documentation
-to see which exception codes can be thrown.
 
 =back
 
