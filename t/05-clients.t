@@ -19,14 +19,17 @@ SKIP: {
     cmp_ok(scalar @$r, '>=', 1, 'At least one client');
 
     my $client = $r->[0];
+    throws_ok { $api->client } qr/required/, 'Call without params dies';
     lives_ok { $r = $api->client($client->{name}) } 'Call to client lives';
     is(ref $r, 'HASH', 'Array returned');
     is($r->{name}, $client->{name}, 'Correct client returned');
 
+    throws_ok { $api->client_history } qr/required/, 'Call without params dies';
     lives_ok { $r = $api->client_history($client->{name}) } 'Call to history lives';
     is(ref $r, 'ARRAY', 'Array returned');
     ok(exists $r->[0]->{history}, 'Key history exists');
 
+    throws_ok { $api->delete_client } qr/required/, 'Call without params dies';
     lives_ok  { $api->delete_client($client->{name}) } 'Call to delete_client lives';
     sleep 10;
     throws_ok { $api->client($client->{name}) } qr/404/, 'Getting deleted client dies';
