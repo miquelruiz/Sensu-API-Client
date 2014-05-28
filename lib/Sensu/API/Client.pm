@@ -77,6 +77,28 @@ sub health {
     return $r;
 }
 
+sub client {
+    my ($self, $name) = @_;
+    croak 'Client name required' unless defined $name;
+    return $self->get(sprintf('/clients/%s', $name));
+}
+
+sub clients {
+    return shift->get('/clients');
+}
+
+sub delete_client {
+    my ($self, $name) = @_;
+    croak 'Client name required' unless defined $name;
+    return $self->delete(sprintf('/clients/%s', $name));
+}
+
+sub client_history {
+    my ($self, $name) = @_;
+    croak 'Client name required' unless defined $name;
+    return $self->get(sprintf('/clients/%s/history', $name));
+}
+
 1;
 
 __END__

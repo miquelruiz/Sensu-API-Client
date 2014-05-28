@@ -13,10 +13,24 @@ SKIP: {
         url => $ENV{SENSU_API_URL},
     );
 
-    TODO: {
-        local $TODO = "Tests here to remind me to write them";
-        ok(0, 'Write tests');
-    };
+    my $r;
+    lives_ok { $r = $api->clients } 'Call to clients lives';
+    is(ref $r, 'ARRAY', 'Array returned');
+    cmp_ok(scalar @$r, '>=', 1, 'At least one client');
+
+    my $client = $r->[0];
+    lives_ok { $r = $api->client($client->{name}) } 'Call to client lives';
+    is(ref $r, 'HASH', 'Array returned');
+    is($r->{name}, $client->{name}, 'Correct client returned');
+
+    lives_ok { $r = $api->client_history($client->{name}) } 'Call to history lives';
+    is(ref $r, 'ARRAY', 'Array returned');
+    ok(exists $r->[0]->{history}, 'Key history exists');
+
+    lives_ok  { $api->delete_client($client->{name}) } 'Call to delete_client lives';
+    sleep 10;
+    throws_ok { $api->client($client->{name}) } qr/404/, 'Getting deleted client dies';
+    throws_ok { $api->delete_client($client->{name}) } qr/404/, 'Call to delete_client dies';
 }
 
 done_testing();
