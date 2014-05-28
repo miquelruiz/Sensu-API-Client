@@ -5,6 +5,7 @@ use 5.010;
 use Moo;
 use JSON;
 use Carp;
+use Try::Tiny;
 
 with 'Sensu::API::Client::APICaller';
 
@@ -58,6 +59,22 @@ sub create_stash {
 sub delete_stash {
     my ($self, $path) = @_;
     return $self->delete('/stashes/' . $path);
+}
+
+sub health {
+    my ($self, %args) = @_;
+    my ($c, $m, $r) = ($args{consumers}, $args{messages}, undef);
+    croak "Consumers and Messages required" unless ($c and $m);
+    try {
+        $r = $self->get(sprintf('/health?consumers=%d&messages=%d', $c, $m));
+    } catch {
+        if ($_ =~ qw/503/) {
+            $r = 0;
+        } else {
+            croak $_;
+        }
+    };
+    return $r;
 }
 
 1;

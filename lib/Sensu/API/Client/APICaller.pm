@@ -27,7 +27,7 @@ sub get {
     my $r = $self->ua->get($self->url . $url, { headers => $self->headers });
     croak "$r->{status} $r->{reason}" unless $r->{success};
 
-    return decode_json($r->{content});
+    return $r->{content} ? decode_json($r->{content}) : 1;
 }
 
 sub post {
