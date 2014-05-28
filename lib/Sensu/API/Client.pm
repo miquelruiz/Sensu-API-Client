@@ -187,11 +187,11 @@ Sensu::API::Client - API client for the Sensu monitoring framework
 
 =head1 DESCRIPTION
 
-Set of modules based in Moo to access the REST API provided by the Sensu
-monitoring framework. Currently supports the version 0.12.
+Set of modules to access the REST API provided by the Sensu monitoring
+framework. Currently supports the version 0.12 of the Sensu API.
 
-Some of the methods throw exceptions. If a parameter is documented as required,
-an exception will be thrown if the method is called without the parameter.
+All methods throw exceptions in case of errors. Not passing a required
+parameter is considered to be an error.
 
 =head1 METHODS
 
@@ -215,7 +215,7 @@ authentication. Example: http://admin:secret@localhost:4567
 Returns an arrayref containing events. Each event is a hashref with the
 following keys: client, check, occurrences, output, status and flapping.
 
-Argument optional.
+The client name is an optional arbument to filter the result by Sensu client.
 
 =head2 event($client, $check)
 
