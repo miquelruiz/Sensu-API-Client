@@ -99,6 +99,23 @@ sub client_history {
     return $self->get(sprintf('/clients/%s/history', $name));
 }
 
+sub checks {
+    return shift->get('/checks');
+}
+
+sub check {
+    my ($self, $name) = @_;
+    croak 'Check name required' unless defined $name;
+    return $self->get(sprintf('/checks/%s', $name));
+}
+
+sub request {
+    my ($self, $name, $subs) = @_;
+    croak 'Name and subscribers required' unless ($name and $subs);
+    croak 'Subscribers must be an arrayref' unless (ref $subs eq 'ARRAY');
+    return $self->post('/request', { check => $name, subscribers => $subs });
+}
+
 1;
 
 __END__
