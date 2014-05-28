@@ -65,6 +65,7 @@ sub create_stash {
 
 sub delete_stash {
     my ($self, $path) = @_;
+    croak 'Path required' unless defined $path;
     return $self->delete('/stashes/' . $path);
 }
 

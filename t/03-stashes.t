@@ -37,6 +37,8 @@ SKIP: {
     is(ref $r, 'ARRAY', 'Got an array ref');
     cmp_ok(@$r, '>=', 1, 'There is at least 1 stash');
 
+    throws_ok { $api->delete_stash } qr/required/, 'Delete stash needs param';
+
     foreach my $s (@$r) {
         $api->delete_stash($s->{path});
     }
