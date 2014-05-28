@@ -31,9 +31,6 @@ SKIP: {
 
     throws_ok { $api->delete_client } qr/required/, 'Call without params dies';
     lives_ok  { $api->delete_client($client->{name}) } 'Call to delete_client lives';
-    sleep 10;
-    throws_ok { $api->client($client->{name}) } qr/404/, 'Getting deleted client dies';
-    throws_ok { $api->delete_client($client->{name}) } qr/404/, 'Call to delete_client dies';
 }
 
 done_testing();
