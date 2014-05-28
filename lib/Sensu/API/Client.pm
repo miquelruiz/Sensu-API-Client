@@ -34,13 +34,13 @@ sub info {
     return shift->get('/info');
 }
 
-sub get_stash {
+sub stash {
     my ($self, $path) = @_;
     die 'Path required' unless $path;
     return $self->get('/stashes/' . $path);
 }
 
-sub get_stashes {
+sub stashes {
     return shift->get('/stashes');
 }
 

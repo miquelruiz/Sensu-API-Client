@@ -21,18 +21,18 @@ SKIP: {
     );
     is ($r->{path}, $path, 'Stash created');
 
-    $r = $api->get_stash($path);
+    $r = $api->stash($path);
     is ($r->{key}, $cont->{key}, 'Correct payload retrieved');
 
     # Clean before start
-    $r = $api->get_stashes;
+    $r = $api->stashes;
     is(ref $r, 'ARRAY', 'Got an array ref');
     cmp_ok(@$r, '>=', 1, 'There is at least 1 stash');
 
     foreach my $s (@$r) {
         $api->delete_stash($s->{path});
     }
-    $r = $api->get_stashes;
+    $r = $api->stashes;
     is(@$r, 0, 'Stashes deleted');
 
     throws_ok { $api->create_stash(
@@ -41,7 +41,7 @@ SKIP: {
         unexpected => 'shit',
     ) } qr/unexpected/i, 'Unexpected keys dies';
 
-    throws_ok { $api->get_stash } qr/path required/i, 'Path required';
+    throws_ok { $api->stash } qr/path required/i, 'Path required';
 
 }
 
