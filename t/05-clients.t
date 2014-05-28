@@ -21,7 +21,7 @@ SKIP: {
     my $client = $r->[0];
     throws_ok { $api->client } qr/required/, 'Call without params dies';
     lives_ok { $r = $api->client($client->{name}) } 'Call to client lives';
-    is(ref $r, 'HASH', 'Array returned');
+    is(ref $r, 'HASH', 'Hash returned');
     is($r->{name}, $client->{name}, 'Correct client returned');
 
     throws_ok { $api->client_history } qr/required/, 'Call without params dies';
