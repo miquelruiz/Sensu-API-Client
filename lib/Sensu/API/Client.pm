@@ -2,10 +2,12 @@ package Sensu::API::Client;
 # ABSTRACT: Perl client for the Sensu API
 
 use 5.010;
-use Moo;
 use JSON;
 use Carp;
 use Try::Tiny;
+
+use Moo;
+use namespace::clean;
 
 with 'Sensu::API::Client::APICaller';
 
