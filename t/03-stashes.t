@@ -21,6 +21,14 @@ SKIP: {
     );
     is ($r->{path}, $path, 'Stash created');
 
+    $r = $api->create_stash(
+        path    => $path x 3,
+        content => $cont,
+        expire  => 15,
+    );
+    is ($r->{path}, $path x 3, 'Stash with expiration created');
+
+
     $r = $api->stash($path);
     is ($r->{key}, $cont->{key}, 'Correct payload retrieved');
 

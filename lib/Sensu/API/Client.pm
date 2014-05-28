@@ -48,7 +48,7 @@ sub create_stash {
     my ($self, @args) = @_;
 
     my $hash = { @args };
-    my %valid_keys = ( path => 1, content => 1 );
+    my %valid_keys = ( path => 1, content => 1, expire => 1 );
     my @not_valid  = grep { not defined $valid_keys{$_} } keys %$hash;
 
     die 'Unexpected keys: ' . join(',', @not_valid) if (scalar @not_valid);
