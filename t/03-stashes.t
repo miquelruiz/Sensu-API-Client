@@ -28,6 +28,7 @@ SKIP: {
     );
     is ($r->{path}, $path x 3, 'Stash with expiration created');
 
+    throws_ok { $api->stash() } qr/required/, 'Path is required';
 
     $r = $api->stash($path);
     is ($r->{key}, $cont->{key}, 'Correct payload retrieved');
