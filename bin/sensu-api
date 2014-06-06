@@ -4,8 +4,8 @@ use 5.010;
 use strict;
 use warnings;
 
+use JSON;
 use Try::Tiny;
-use Data::Dump;
 use Getopt::Long;
 use Sensu::API::Client;
 
@@ -27,6 +27,9 @@ my %dispatch = (
     list            => \&cmd_list,
     'create-stash'  => \&cmd_create_stash,
     'delete-stash'  => \&cmd_delete_stash,
+    events          => \&cmd_list_events,
+    resolve         => \&cmd_delete_event,
+    clients         => \&cmd_list_clients,
 );
 
 my $sub = $dispatch{$opts{cmd}};
@@ -35,6 +38,18 @@ die "Uknown command '$opts{cmd}'\n" unless $sub;
 print_result($sub->(\%opts));
 
 exit 0;
+
+sub cmd_list_clients {
+    api()->clients;
+}
+
+sub cmd_list_events {
+    api()->events;
+}
+
+sub cmd_delete_event {
+    api()->resolve(@ARGV);
+}
 
 sub cmd_list {
     my $opts = shift;
@@ -71,7 +86,7 @@ sub cmd_delete_stash {
 
 sub api { Sensu::API::Client->new(url => $opts{url}) }
 
-sub print_result { dd @_ }
+sub print_result { say JSON->new->utf8->pretty(1)->encode(shift) }
 
 sub clean_exception {
     my $e = shift;
