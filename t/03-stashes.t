@@ -46,12 +46,6 @@ SKIP: {
     $r = $api->stashes;
     is(@$r, 0, 'Stashes deleted');
 
-    throws_ok { $api->create_stash(
-        path => $path . $path,
-        content => { key => 'value' },
-        unexpected => 'shit',
-    ) } qr/unexpected/i, 'Unexpected keys dies';
-
     throws_ok { $api->stash } qr/path required/i, 'Path required';
 
 }

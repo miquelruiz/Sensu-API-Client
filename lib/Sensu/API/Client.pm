@@ -17,70 +17,74 @@ has url => (
 );
 
 sub events {
-    my ($self, $client) = @_;
+    my ($self, $client, %args) = @_;
     my $path = '/events';
     $path .= "/$client" if $client;
-    return $self->_request('get', $path);
+    return $self->_request('get', $path, %args);
 }
 
 sub event {
-    my ($self, $client, $check) = @_;
+    my ($self, $client, $check, %args) = @_;
     croak 'Client and check required' unless ($client and $check);
-    return $self->_request('get', sprintf('/events/%s/%s', $client, $check));
+    return $self->_request(
+        'get',
+        sprintf('/events/%s/%s', $client, $check),
+        %args,
+    );
 }
 
 sub resolve {
-    my ($self, $client, $check) = @_;
+    my ($self, $client, $check, %args) = @_;
     croak "Client and check required" unless ($client and $check);
     return $self->_request(
         'post',
         '/resolve',
         body => { client => $client, check => $check },
+        %args,
     );
 }
 
 sub info {
-    return shift->_request('get', '/info');
+    return shift->_request('get', '/info', @_);
 }
 
 sub stash {
-    my ($self, $path) = @_;
+    my ($self, $path, %args) = @_;
     croak 'Path required' unless $path;
-    return $self->_request('get', '/stashes/' . $path);
+    return $self->_request('get', '/stashes/' . $path, %args);
 }
 
 sub stashes {
-    return shift->_request('get', '/stashes');
+    return shift->_request('get', '/stashes', @_);
 }
 
 sub create_stash {
-    my ($self, @args) = @_;
+    my ($self, %args) = @_;
 
-    my $hash = { @args };
     my %valid_keys = ( path => 1, content => 1, expire => 1 );
-    my @not_valid  = grep { not defined $valid_keys{$_} } keys %$hash;
 
-    die 'Unexpected keys: ' . join(',', @not_valid) if (scalar @not_valid);
-    die 'Path required'    unless $hash->{path};
-    die 'Content required' unless $hash->{content};
+    die 'Path required'    unless $args{path};
+    die 'Content required' unless $args{content};
 
-    return $self->_request('post', '/stashes', body => {@args});
+    my %body = map { $_ => delete $args{$_} } qw/ path content expire /;
+    return $self->_request('post', '/stashes', body => \%body, %args);
 }
 
 sub delete_stash {
-    my ($self, $path) = @_;
+    my ($self, $path, %args) = @_;
     croak 'Path required' unless defined $path;
-    return $self->_request('delete', '/stashes/' . $path);
+    return $self->_request('delete', '/stashes/' . $path, %args);
 }
 
 sub health {
     my ($self, %args) = @_;
-    my ($c, $m, $r) = ($args{consumers}, $args{messages}, undef);
+    my ($c, $m, $r) = (delete $args{consumers}, delete $args{messages}, undef);
     croak "Consumers and Messages required" unless ($c and $m);
     try {
         $r = $self->_request(
             'get',
-            sprintf('/health?consumers=%d&messages=%d', $c, $m)
+            sprintf('/health?consumers=%d&messages=%d', $c, $m),
+            %args,
         );
     } catch {
         if ($_ =~ qw/503/) {
@@ -93,45 +97,51 @@ sub health {
 }
 
 sub client {
-    my ($self, $name) = @_;
+    my ($self, $name, %args) = @_;
     croak 'Client name required' unless defined $name;
-    return $self->_request('get', sprintf('/clients/%s', $name));
+    return $self->_request('get', sprintf('/clients/%s', $name), %args);
 }
 
 sub clients {
-    return shift->_request('get', '/clients');
+    return shift->_request('get', '/clients', @_);
 }
 
 sub delete_client {
-    my ($self, $name) = @_;
+    my ($self, $name, %args) = @_;
     croak 'Client name required' unless defined $name;
-    return $self->_request('delete', sprintf('/clients/%s', $name));
+    return $self->_request('delete', sprintf('/clients/%s', $name), %args);
 }
 
 sub client_history {
-    my ($self, $name) = @_;
+    my ($self, $name, %args) = @_;
     croak 'Client name required' unless defined $name;
-    return $self->_request('get', sprintf('/clients/%s/history', $name));
+    return $self->_request(
+        'get',
+        sprintf('/clients/%s/history', $name),
+        %args,
+    );
 }
 
 sub checks {
-    return shift->_request('get', '/checks');
+    return shift->_request('get', '/checks', @_);
 }
 
 sub check {
-    my ($self, $name) = @_;
+    my ($self, $name, %args) = @_;
     croak 'Check name required' unless defined $name;
-    return $self->_request('get', sprintf('/checks/%s', $name));
+    return $self->_request('get', sprintf('/checks/%s', $name), %args);
 }
 
 sub request {
-    my ($self, $name, $subs) = @_;
-    croak 'Name and subscribers required' unless (defined $name and defined $subs);
+    my ($self, $name, $subs, %args) = @_;
+    croak 'Name and subscribers required'
+        unless (defined $name and defined $subs);
     croak 'Subscribers must be an arrayref' unless (ref $subs eq 'ARRAY');
     return $self->_request(
         'post',
         '/request',
         body => { check => $name, subscribers => $subs },
+        %args,
     );
 }
 
