@@ -11,7 +11,15 @@ use Try::Tiny;
 use Moo;
 use namespace::clean;
 
-with 'Sensu::API::Client::APICaller';
+my $async;
+sub import {
+    if (pop eq 'async') {
+        with 'Sensu::API::Client::APICallerAsync';
+        $async = 1;
+    } else {
+        with 'Sensu::API::Client::APICaller';
+    }
+}
 
 has url => (
     is       => 'ro',
