@@ -27,7 +27,7 @@ SKIP: {
 
     throws_ok { $api->request } qr/required/, 'Call without params dies';
     throws_ok { $api->request($check->{name}, 'xxx') } qr/arrayref/, 'Wrong param';
-    lives_ok  { $api->request($check->{name}, $check->{subscribers}) } 'Call ok lives';
+    lives_ok  { $api->request($check->{name}, ['test']) } 'Call ok lives';
 }
 
 done_testing();

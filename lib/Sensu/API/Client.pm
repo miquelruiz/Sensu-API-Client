@@ -20,33 +20,37 @@ sub events {
     my ($self, $client) = @_;
     my $path = '/events';
     $path .= "/$client" if $client;
-    return $self->get($path);
+    return $self->_request('get', $path);
 }
 
 sub event {
     my ($self, $client, $check) = @_;
     croak 'Client and check required' unless ($client and $check);
-    return $self->get(sprintf('/events/%s/%s', $client, $check));
+    return $self->_request('get', sprintf('/events/%s/%s', $client, $check));
 }
 
 sub resolve {
     my ($self, $client, $check) = @_;
     croak "Client and check required" unless ($client and $check);
-    return $self->post('/resolve', { client => $client, check => $check });
+    return $self->_request(
+        'post',
+        '/resolve',
+        body => { client => $client, check => $check },
+    );
 }
 
 sub info {
-    return shift->get('/info');
+    return shift->_request('get', '/info');
 }
 
 sub stash {
     my ($self, $path) = @_;
     croak 'Path required' unless $path;
-    return $self->get('/stashes/' . $path);
+    return $self->_request('get', '/stashes/' . $path);
 }
 
 sub stashes {
-    return shift->get('/stashes');
+    return shift->_request('get', '/stashes');
 }
 
 sub create_stash {
@@ -60,13 +64,13 @@ sub create_stash {
     die 'Path required'    unless $hash->{path};
     die 'Content required' unless $hash->{content};
 
-    return $self->post('/stashes', {@args});
+    return $self->_request('post', '/stashes', body => {@args});
 }
 
 sub delete_stash {
     my ($self, $path) = @_;
     croak 'Path required' unless defined $path;
-    return $self->delete('/stashes/' . $path);
+    return $self->_request('delete', '/stashes/' . $path);
 }
 
 sub health {
@@ -74,7 +78,10 @@ sub health {
     my ($c, $m, $r) = ($args{consumers}, $args{messages}, undef);
     croak "Consumers and Messages required" unless ($c and $m);
     try {
-        $r = $self->get(sprintf('/health?consumers=%d&messages=%d', $c, $m));
+        $r = $self->_request(
+            'get',
+            sprintf('/health?consumers=%d&messages=%d', $c, $m)
+        );
     } catch {
         if ($_ =~ qw/503/) {
             $r = 0;
@@ -88,40 +95,44 @@ sub health {
 sub client {
     my ($self, $name) = @_;
     croak 'Client name required' unless defined $name;
-    return $self->get(sprintf('/clients/%s', $name));
+    return $self->_request('get', sprintf('/clients/%s', $name));
 }
 
 sub clients {
-    return shift->get('/clients');
+    return shift->_request('get', '/clients');
 }
 
 sub delete_client {
     my ($self, $name) = @_;
     croak 'Client name required' unless defined $name;
-    return $self->delete(sprintf('/clients/%s', $name));
+    return $self->_request('delete', sprintf('/clients/%s', $name));
 }
 
 sub client_history {
     my ($self, $name) = @_;
     croak 'Client name required' unless defined $name;
-    return $self->get(sprintf('/clients/%s/history', $name));
+    return $self->_request('get', sprintf('/clients/%s/history', $name));
 }
 
 sub checks {
-    return shift->get('/checks');
+    return shift->_request('get', '/checks');
 }
 
 sub check {
     my ($self, $name) = @_;
     croak 'Check name required' unless defined $name;
-    return $self->get(sprintf('/checks/%s', $name));
+    return $self->_request('get', sprintf('/checks/%s', $name));
 }
 
 sub request {
     my ($self, $name, $subs) = @_;
-    croak 'Name and subscribers required' unless ($name and $subs);
+    croak 'Name and subscribers required' unless (defined $name and defined $subs);
     croak 'Subscribers must be an arrayref' unless (ref $subs eq 'ARRAY');
-    return $self->post('/request', { check => $name, subscribers => $subs });
+    return $self->_request(
+        'post',
+        '/request',
+        body => { check => $name, subscribers => $subs },
+    );
 }
 
 1;

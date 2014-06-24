@@ -22,34 +22,35 @@ has headers => (
     }; },
 );
 
-sub get {
-    my ($self, $url) = @_;
-    my $r = $self->ua->get($self->url . $url, { headers => $self->headers });
-    croak "$r->{status} $r->{reason}" unless $r->{success};
+my %known_methods = (
+    get    => 1,
+    post   => 1,
+    delete => 1,
+);
 
-    return $r->{content} ? decode_json($r->{content}) : 1;
-}
+sub _request {
+    my ($self, $method, $url, %args) = @_;
+    $method = lc $method;
+    croak "Not implemented method '$method'" unless $known_methods{$method};
 
-sub post {
-    my ($self, $url, $body) = @_;
-    my $post = { headers => $self->headers };
-    if (defined $body) {
-        $post->{content} = encode_json($body);
+    my $r;
+    if ($method eq 'post') {
+        my $post = { headers => $self->headers };
+        if (defined $args{body}) {
+            $post->{content} = encode_json($args{body});
+        } else {
+            $post->{headers}->{'Content-Length'} = '0';
+        }
+        $r = $self->ua->post($self->url . $url, $post);
     } else {
-        $post->{headers}->{'Content-Length'} = '0';
+        $r = $self->ua->$method(
+            $self->url . $url,
+            { headers => $self->headers },
+        );
     }
 
-    my $r = $self->ua->post($self->url . $url, $post);
     croak "$r->{status} $r->{reason}" unless $r->{success};
-
-    return decode_json($r->{content});
-}
-
-sub delete {
-    my ($self, $url) = @_;
-    my $r = $self->ua->delete($self->url . $url, { headers => $self->headers });
-    croak "$r->{status} $r->{reason}" unless $r->{success};
-    return;
+    return $r->{content} ? decode_json($r->{content}) : 1;
 }
 
 1;
