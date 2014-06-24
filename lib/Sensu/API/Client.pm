@@ -2,6 +2,8 @@ package Sensu::API::Client;
 # ABSTRACT: Perl client for the Sensu API
 
 use 5.010;
+
+use URI;
 use JSON;
 use Carp;
 use Try::Tiny;
@@ -15,6 +17,15 @@ has url => (
     is       => 'ro',
     required => 1,
 );
+
+has _auth => (
+    is      => 'rw',
+);
+
+sub BUILD {
+    my ($self) = @_;
+    $self->_auth(URI->new($self->url)->userinfo);
+}
 
 sub events {
     my ($self, $client, %args) = @_;
