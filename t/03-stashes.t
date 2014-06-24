@@ -13,6 +13,14 @@ SKIP: {
         url => $ENV{SENSU_API_URL},
     );
 
+    throws_ok { $api->create_stash() } qr/required/, 'Dies with no args';
+    throws_ok {
+        $api->create_stash(content => {});
+    } qr/required/, 'Dies without path';
+    throws_ok {
+        $api->create_stash(path => 'xxx');
+    } qr/required/, 'Dies without content';
+
     my $path = 'xxxx';
     my $cont = { key => 'value' };
     my $r = $api->create_stash(
