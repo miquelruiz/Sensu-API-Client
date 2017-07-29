@@ -154,6 +154,8 @@ __END__
 
 Sensu::API::Client - API client for the Sensu monitoring framework
 
+=for html <a href="https://travis-ci.org/miquelruiz/Sensu-API-Client"><img src="https://travis-ci.org/miquelruiz/Sensu-API-Client.svg?branch=master"></a>
+
 =head1 SYNOPSIS
 
     use Try::Tiny;
@@ -393,7 +395,7 @@ Miquel Ruiz <mruiz@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Miquel Ruiz.
+This software is copyright (c) 2017 by Miquel Ruiz.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
